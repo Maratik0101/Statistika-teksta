@@ -1,0 +1,60 @@
+using System;
+using System.IO;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Просим пользователя ввести путь к текстовому файлу
+        Console.WriteLine("Введите путь к текстовому файлу:");
+        string filePath = Console.ReadLine();
+
+        // Проверяем существует ли файл по указанному пути
+        if (!File.Exists(filePath))
+        {
+            Console.WriteLine("Файл не найден. Проверьте путь.");
+            return;
+        }
+
+        try
+        {
+            // Читаем текст из файла
+            string text = File.ReadAllText(filePath);
+
+            // Подсчитываем количество символов
+            int totalChars = text.Length;
+
+            // Подсчитываем количество символов без пробелов
+            int charsWithoutSpaces = text.Replace(" ", "").Replace("\n", "").Replace("\r", "").Replace("\t", "").Length;
+
+            // Подсчитываем количество слов
+            int wordCount = CountWords(text);
+
+            // Формируем статистику
+            string stats = $"Количество символов в тексте: {totalChars}\n" +
+                           $"Количество символов в тексте без пробелов: {charsWithoutSpaces}\n" +
+                           $"Количество слов: {wordCount}";
+
+            // Выводим статистику в консоль
+            Console.WriteLine(stats);
+
+            // Определяем путь для сохранения статистики в файл
+            string outputFilePath = Path.Combine(Path.GetDirectoryName(filePath), "статистика.txt");
+            File.WriteAllText(outputFilePath, stats);
+
+            // Уведомляем пользователя о сохранении статистики в файл
+            Console.WriteLine($"Статистика сохранена в файл: {outputFilePath}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Ошибка: {ex.Message}");
+        }
+    }
+
+    // Метод для подсчета количества слов в тексте
+    static int CountWords(string text)
+    {
+        // Разделяем текст на слова
+        return text.Split(new char[] { ' ', '\n', '\r', '\t' }, StringSplitOptions.RemoveEmptyEntries).Length;
+    }
+}
